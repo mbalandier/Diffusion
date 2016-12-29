@@ -32,10 +32,11 @@ public class VuePrincipale extends View implements Runnable{
     }
 
     /**
-     * Méthode appelée une fois le délai écoulé pour réactualiser l'affichage.
+     * Méthode appelée une fois le délai écoulé pour réactualiser l'affichage
+     * Cela relance aussi la méthode onDraw(...)
      */
     @Override
     public void run(){
         invalidate();   // Méthode qui réactualise l'affichage du Canvas et de tout ce qu'il contient.
-    }                   //Cela relance aussi la méthode onDraw(...)
+    }
 }

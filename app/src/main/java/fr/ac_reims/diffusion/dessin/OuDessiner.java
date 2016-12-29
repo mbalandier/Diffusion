@@ -12,12 +12,12 @@ import fr.ac_reims.diffusion.obstacles.Atome;
 class OuDessiner {
     private static final String TAG = "WhereToDraw";
 
-    private double right;
-    private double bottom;
+    private double xMax;
+    private double yMax;
 
-    public OuDessiner(Rect limites) {
-        right = limites.right;
-        bottom = limites.bottom;
+    OuDessiner(Rect limites) {
+        xMax = limites.right;
+        yMax = limites.bottom;
     }
 
     /**
@@ -32,7 +32,7 @@ class OuDessiner {
     void cumulerDeplacement(){
         double dureeCumulee=0;
         do {
-            double tMin = plusProche();
+            double tMin = calculerTempsMinimal();
             if (dureeCumulee + tMin > 1){
                 tMin = 1-dureeCumulee;
             }
@@ -41,31 +41,18 @@ class OuDessiner {
         } while (dureeCumulee<1);
     }
 
-    private void deplacerAtomes(double tMin){
-        int length = QuoiDessiner.getAtomes().size();
-        for (int i=0 ; i<length ; i++) {
-            Atome atome = QuoiDessiner.getAtomes().get(i);
-            double[] P = atome.getPosition();
-            double[] V = atome.getVitesse();
-            double[] distance = {V[0]*tMin, V[1]*tMin};// distance avant impact.
-            P[0] += distance[0];
-            P[1] += distance[1];
-            atome.setPosition(P);
-        }
-    }
-
-    private double plusProche(){
+    private double calculerTempsMinimal(){
         double tMin = 1;
         int length = QuoiDessiner.getAtomes().size();
         for (int i=0 ; i<length ; i++) {
             Atome atome1 = QuoiDessiner.getAtomes().get(i);
-            double t1 = prochaineCollisionBordure(atome1);
+            double t1 = calculerProchaineBordure(atome1);
             if(t1 < tMin){
                 tMin = t1;
             }
             for (int j=0 ; j<length-i ; j++) {
                 Atome atome2 = QuoiDessiner.getAtomes().get(i+j);
-                double t2 = prochaineCollisionEntreAtomes(atome1, atome2);
+                double t2 = calculerProchainAtome(atome1, atome2);
                 if (t2  < tMin) {
                     Log.d(TAG, ">> Collision entre atomes à t = " + t2);
                     tMin = t2;
@@ -76,36 +63,33 @@ class OuDessiner {
         return tMin;
     }
 
-
-
-
-    private double prochaineCollisionBordure(Atome atome1){
+    private double calculerProchaineBordure(Atome atome1){
         double[] P = atome1.getPosition();
         double[] V = atome1.getVitesse();
         double R = atome1.getRayon();
-        double time = -1;
+        double delai = -1;
         if (V[0] != 0){
-            time = V[0] > 0 ? (right - P[0] - R) / V[0] : (R - P[0]) / V[0];
-            if (time == 0){
+            delai = V[0] > 0 ? (xMax - P[0] - R) / V[0] : (R - P[0]) / V[0];
+            if (delai == 0){
                 V[0] *= -1;
                 atome1.setVitesse(V);
             }
         }
         if (V[1] != 0){
-            double otherTime = V[1] > 0 ? (bottom - P[1] - R) / V[1] : (R - P[1]) / V[1];
-            if (otherTime <= 0.00000000001){
+            double autreDelai = V[1] > 0 ? (yMax - P[1] - R) / V[1] : (R - P[1]) / V[1];
+            if (autreDelai <= 0.00000000001){
                 V[1] *= -1;
                 atome1.setVitesse(V);
             }
-            if (otherTime < time) {
-                time = otherTime;
+            if (autreDelai < delai) {
+                delai = autreDelai;
             }
         }
-        return time;
+        return delai;
     }
 
 
-    private static double prochaineCollisionEntreAtomes(Atome atome1, Atome atome2){
+    private static double calculerProchainAtome(Atome atome1, Atome atome2){
         double time = 1;
 
         double[] V1 = atome1.getVitesse();
@@ -150,5 +134,20 @@ class OuDessiner {
         }
         return time;
     }
+
+    private void deplacerAtomes(double tMin){
+        int length = QuoiDessiner.getAtomes().size();
+        for (int i=0 ; i<length ; i++) {
+            Atome atome = QuoiDessiner.getAtomes().get(i);
+            double[] P = atome.getPosition();
+            double[] V = atome.getVitesse();
+            double[] distance = {V[0]*tMin, V[1]*tMin};// distance avant impact.
+            P[0] += distance[0];
+            P[1] += distance[1];
+            atome.setPosition(P);
+        }
+    }
+
+
 
 }
