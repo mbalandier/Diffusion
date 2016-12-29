@@ -30,6 +30,6 @@ public class Dessinateur extends Handler{
         commentDessiner.afficher(canvas);         // 3) Comment dois-je les dessiner ? (couleurs ?)
 
         numeroImage++;
-        return quandDessiner.getVraiDelai(numeroImage); // 4) Quand dois-je dessiner ?
+        return quandDessiner.getDelai(numeroImage); // 4) Quand dois-je dessiner ?
     }
 }

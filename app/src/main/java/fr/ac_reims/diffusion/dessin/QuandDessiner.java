@@ -12,7 +12,7 @@ class QuandDessiner extends Handler{
     private static final String TAG = "WhenToDraw";
     private long t0; // date initiale de la première image affichée.
 
-    long getVraiDelai(long numeroImage){
+    long getDelai(long numeroImage){
         Calendar calendar = Calendar.getInstance();
         long t; // durée écoulée depuis la première image.
         long persistence = 30; // durée (en ms) théorique entre deux images successives.
